@@ -1,6 +1,9 @@
 #ifndef PLY_CGALIMPORTER_H
 #define PLY_CGALIMPORTER_H
 
+#include <QImage>
+#include <QColor>
+
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <cstdio>
@@ -75,7 +78,9 @@ private:
 		
 		int Number_vertices = (int)this->mesh.mVertices.size();
 
-		
+		QImage img;
+		bool succes = img.load("mepp_background.bmp");
+
 		int Number_faces = (int)this->mesh.mIndices.size()/3;
 		
 		for (int i = 0 ; i < Number_vertices; i++)
@@ -88,15 +93,43 @@ private:
 			Vertices_position.push_back(Temp_position);
 
 			//Vertex_handle vertex = builder.add_vertex(Point(coord[0],coord[1],coord[2]));
-			if (this->mesh.mColors.size() != 0)
+			if (this->mesh.mTexCoords.size() != 0)
 			{
-				vector<float> Temp_color;
-				Temp_color.push_back(mesh.mColors[i].x);
-				Temp_color.push_back(mesh.mColors[i].y);
-				Temp_color.push_back(mesh.mColors[i].z);
+					vector<float> Temp_color;
+					int x,y;
+					int r = 0;
+					int g = 0;
+					int b = 0;
 
-				Vertices_color.push_back(Temp_color);
-				//vertex->color(rgb[0], rgb[1], rgb[2]);
+					x = mesh.mTexCoords[i].u*img.size().width();
+					y = mesh.mTexCoords[i].v*img.size().height();
+
+					if(x < img.size().width() || y < img.size().height())
+					{
+						QRgb rgb = img.pixel(x,y);
+						QColor color = QColor(rgb);
+						color.getRgb(&r,&g,&b);
+					}
+
+					Temp_color.push_back(r);
+					Temp_color.push_back(g);
+					Temp_color.push_back(b);
+
+					Vertices_color.push_back(Temp_color);
+			}
+			else
+			{
+				if (this->mesh.mColors.size() != 0)
+				{
+					vector<float> Temp_color;
+
+					Temp_color.push_back(mesh.mColors[i].x);
+					Temp_color.push_back(mesh.mColors[i].y);
+					Temp_color.push_back(mesh.mColors[i].z);
+
+					Vertices_color.push_back(Temp_color);
+					//vertex->color(rgb[0], rgb[1], rgb[2]);
+				}
 			}
 		}
 		for (int i = 0 ; i < Number_faces; i++)
