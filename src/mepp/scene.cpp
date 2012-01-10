@@ -76,6 +76,7 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 				res = polyhedron_ptr->load_mesh_x3d(filename.toStdString());
 			else
 				res = 1;
+			polyhedron_ptr->apply_texture_to_vertex_colors();
 		}
 	}
 

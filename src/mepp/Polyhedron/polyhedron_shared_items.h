@@ -11,6 +11,8 @@
 
 #include <fstream>
 #include <list>
+#include <boost/any.hpp>
+
 
 #include <CGAL/IO/Polyhedron_VRML_2_ostream.h> // for vrml writing
 
@@ -45,6 +47,13 @@
 
 using namespace std;
 using namespace CGAL;
+
+struct Texture
+{
+	string m_name;
+	QImage m_data;
+	GLuint m_id;
+};
 
 // compute facet normal
 struct Facet_normal // (functor)
@@ -236,20 +245,29 @@ class MEPP_Common_Vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 		// color
 		float m_color[3];
 
+		// texture coordinate
+		float m_texture_coordinate[2];
+
 	public:
 		// life cycle
 		MEPP_Common_Vertex()
 		{
 			color(0.5f, 0.5f, 0.5f);
+			texture_coordinate(0.0f, 0.0f);
 		}
 		// repeat mandatory constructors
 		MEPP_Common_Vertex(const P& pt) : CGAL::HalfedgeDS_vertex_base<Refs, T, P>(pt)
 		{
 			color(0.5f, 0.5f, 0.5f);
+			texture_coordinate(0.0f, 0.0f);
 		}
 
 		float color(int index) { return m_color[index]; };
 		void color(float r, float g, float b) { m_color[0] = r; m_color[1] = g; m_color[2] = b; };
+
+		// texture coordinate
+		float texture_coordinate(int index) { return m_texture_coordinate[index]; };
+		void texture_coordinate(float u, float v) { m_texture_coordinate[0] = u; m_texture_coordinate[1] = v; };
 
 		// normal
 		typedef Norm Normal_3;
@@ -305,10 +323,16 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		
 		GLuint id_cube;
 
+		vector<Texture> m_texture_array; 
+
 	public:
 		// life cycle
 		MEPP_Common_Polyhedron()
 		{
+			vector<string> tex_name;
+			tex_name.push_back("mepp_background.bmp");
+			set_texture(tex_name);
+
 			m_pure_quad = false;
 			m_pure_triangle = false;
 			m_has_color = false;
@@ -1155,7 +1179,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			// build the polyhedron
 			Builder_ply<HalfedgeDS> poly_builder(filename);
 			this->delegate(poly_builder);
-
+			
 			return 0;
 		}
 
@@ -1257,7 +1281,41 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			this->compute_normals();
 			this->compute_type();
         }
-
+		void set_texture(vector<string> texture_array)
+		{
+			m_texture_array.clear();
+			for(int i = 0; i < texture_array.size(); i++)
+			{
+				Texture texture;
+				texture.m_name = texture_array[i];
+				bool load_sucess = texture.m_data.load(texture.m_name.c_str());
+				if(load_sucess)
+				{
+					//TODO LOAD Texture in OpenGL
+				}
+				m_texture_array.push_back(texture);
+			}
+		}
+		void apply_texture_to_vertex_colors(int indexe = 0)
+		{
+			for (Vertex_iterator it = this->vertices_begin(); it !=  this->vertices_end(); ++it)
+			{
+				int x,y;
+				int r = 0;
+				int g = 0;
+				int b = 0;
+				x = it->texture_coordinate(0)*m_texture_array[indexe].m_data.size().width();
+				y = it->texture_coordinate(1)*m_texture_array[indexe].m_data.size().height();
+				if(x < m_texture_array[indexe].m_data.size().width() || y < m_texture_array[indexe].m_data.size().height())
+				{
+					QRgb rgb = m_texture_array[indexe].m_data.pixel(x,y);
+					QColor color = QColor(rgb);
+					color.getRgb(&r,&g,&b);
+				}
+				it->color(r,g,b);
+			}
+			//std::for_each(this->vertices_begin(),this->vertices_end(),Texture_to_vertex_colors(m_texture_array[indexe].m_data));
+		}
 	protected:
 #if (0)
 		bool load_mesh_off(string filename)
@@ -1345,6 +1403,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return true;
 		}
 #endif
+
 
 };
 
