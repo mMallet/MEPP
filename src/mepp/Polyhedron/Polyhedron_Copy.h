@@ -76,7 +76,7 @@ public:
                         Vertex_handle vertex = B.add_vertex(pVertex->point());  // add original vertices to the new poly
 
 			vertex->color(pVertex->color(0), pVertex->color(1), pVertex->color(2)); // MT: add color
-
+			vertex->texture_coordinate(pVertex->texture_coordinate(0), pVertex->texture_coordinate(1));//Texture coordinate
 			index++;
 		}
 	}

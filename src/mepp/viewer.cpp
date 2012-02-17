@@ -1086,6 +1086,8 @@ void Viewer::dessine_space(bool names)
 			scene_ptr->set_current_polyhedron(i);
 			if (scene_ptr->get_polyhedron(i)->pShow)
 			{
+				//vector<GLuint> texture_array =  scene_ptr->get_polyhedron(i)->getIdTextureArray();
+				//glBindTexture(GL_TEXTURE_2D, texture_array[0]);
 				if (VBO_mode)
 				{
 					if (createLists)
@@ -1198,15 +1200,16 @@ void Viewer::dessine(bool names)
 			render(false, false); // Draws the scene
 		else
 		{
-			scene_ptr->get_polyhedron()->gen_glListCube();
-
 			if (createLists)
 			{
+				
 				glNewList(glId, GL_COMPILE); // compile list (don't display now)
 					render(false, false); // Draws the scene
 				glEndList(); // list created
 				createLists = false;
 			}
+
+
 			glCallList(glId); // Draws the scene
 		}
 	}

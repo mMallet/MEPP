@@ -1,4 +1,4 @@
-/*!
+/*! 
  * \file viewer.hxx
  * \brief Viewer file.
  * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
@@ -262,6 +262,30 @@ class Viewer : public QGLViewer
 		 * \return b true or false.
 		 */
 		bool getVertex_Color() { return m_UseVertexColor; }
+				/*!
+		 * \fn setTexture(bool b)
+		 * \brief View mesh(es) in texture mode (or not).
+		 *
+		 * \param b true or false.
+		 */
+		void setTexture(bool b) { 
+			m_UseTexture = b; 
+			if(b)
+			{
+				glDisable(GL_TEXTURE_2D);
+			}
+			else
+			{
+				glEnable(GL_TEXTURE_2D);
+			}
+		}
+		/*!
+		 * \fn getTexture
+		 * \brief return true if viewing mesh(es) in texture mode is active.
+		 *
+		 * \return b true or false.
+		 */
+		bool getTexture() { return m_UseTexture; }
 		/*!
 		 * \fn setFace_Color(bool b)
 		 * \brief View mesh(es) in face color mode (or not).
@@ -1037,6 +1061,7 @@ class Viewer : public QGLViewer
 		int m_PolygonMode;
 		bool m_SmoothShading;
 		bool m_UseVertexColor;
+		bool m_UseTexture;
 		bool m_UseFaceColor;
 		bool m_UseNormals;
 		//bool m_FirstView;

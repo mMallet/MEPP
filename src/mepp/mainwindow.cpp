@@ -509,6 +509,9 @@ void mainwindow::updateMenus()
 		actionOpen_and_Add_time->setEnabled(false);
 	}
 
+	actionOpenTexture->setEnabled(hasMdiChild);
+	actionTextureToVertex->setEnabled(hasMdiChild);
+
 	actionSave_As->setEnabled(hasMdiChild);
     actionClose->setEnabled(hasMdiChild);
 
@@ -1007,6 +1010,57 @@ void mainwindow::actionOpen_and_Add_time_slot(QString title, QString typeFiles, 
 void mainwindow::on_actionOpen_and_Add_time_triggered()
 {
 	actionOpen_and_Add_time_slot(tr("Open and Add Mesh File(s) (time)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d)"), NULL);
+}
+
+void mainwindow::on_actionOpenTexture_triggered()
+{
+	Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild());
+	if (viewer != 0)
+	{
+		QStringList files = QFileDialog::getOpenFileNames(this,tr("Select a texture to apply to the polyhedron"),
+			"./",
+			tr("Images (*.bmp)"));
+		if(files.count()>0)
+		{
+			int id = viewer->getScenePtr()->get_current_polyhedron();
+			const PolyhedronPtr poly = viewer->getScenePtr()->get_polyhedron(id);
+			vector<string> tex_name;
+			tex_name.push_back(files.first().toStdString());
+			poly->set_texture(tex_name);
+			poly->load_gl_texture();
+			viewer->recreateListsAndUpdateGL();
+		}
+	}
+}
+
+void mainwindow::on_actionEnableTexture_triggered()
+{
+	Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild());
+	if (viewer != 0)
+	{
+		if(viewer->getTexture())
+			viewer->setTexture(false);
+		else
+			viewer->setTexture(true);
+		viewer->recreateListsAndUpdateGL();
+	}
+}
+
+void mainwindow::on_actionTextureToVertex_triggered()
+{
+	Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild());
+	if (viewer != 0)
+	{
+		int id = viewer->getScenePtr()->get_current_polyhedron();
+		const PolyhedronPtr poly = viewer->getScenePtr()->get_polyhedron(id);
+		
+		if (poly->has_texture())
+		{
+			poly->apply_texture_to_vertex_colors();
+			actionFace_Color->setChecked((viewer)->getFace_Color());
+			viewer->recreateListsAndUpdateGL();
+		}
+	}
 }
 
 void mainwindow::actionAddEmpty_slot()

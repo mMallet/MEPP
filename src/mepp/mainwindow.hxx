@@ -1,4 +1,4 @@
-/*!
+/*! 
  * \file mainwindow.hxx
  * \brief mainwindow file.
  * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
@@ -621,7 +621,9 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 */
 		void on_actionDynLast_triggered();
 		// dynamic options
-
+		void on_actionOpenTexture_triggered();
+		void on_actionTextureToVertex_triggered();
+		void on_actionEnableTexture_triggered();
 	private:
 		Viewer* the_viewer;									//!< last new/load viewer
 		QGLViewer* aboutQGLViewer;							//!< QGLViewer for about dialog box

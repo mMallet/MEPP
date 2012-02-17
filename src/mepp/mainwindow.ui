@@ -168,6 +168,9 @@
    <addaction name="separator"/>
    <addaction name="actionClone"/>
    <addaction name="actionDelete"/>
+   <addaction name="separator"/>
+   <addaction name="actionOpenTexture"/>
+   <addaction name="actionTextureToVertex"/>
   </widget>
   <widget class="QToolBar" name="Toolbar_viewer">
    <property name="windowTitle">
@@ -189,6 +192,7 @@
    <addaction name="separator"/>
    <addaction name="actionVertex_Color"/>
    <addaction name="actionFace_Color"/>
+   <addaction name="actionEnableTexture"/>
    <addaction name="separator"/>
    <addaction name="actionLighting"/>
    <addaction name="actionSmooth_Shading"/>
@@ -891,6 +895,27 @@
   <action name="actionChange_Viewer_Mode_Space_Time">
    <property name="text">
     <string>Change Viewer Mode (Normal)</string>
+   </property>
+  </action>
+  <action name="actionOpenTexture">
+   <property name="text">
+    <string>Open Texture</string>
+   </property>
+  </action>
+  <action name="actionTextureToVertex">
+   <property name="text">
+    <string>Texture to vertex</string>
+   </property>
+  </action>
+  <action name="actionEnableTexture">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Texture</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable Texture</string>
    </property>
   </action>
  </widget>

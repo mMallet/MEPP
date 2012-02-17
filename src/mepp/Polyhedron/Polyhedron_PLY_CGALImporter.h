@@ -30,7 +30,7 @@ private:
 	vector< vector<float> > Vertices_color;
 	vector< vector<float> > Vertices_texture_coordinates;
 	vector< vector<int> >   Facets;
-	
+	bool m_has_texture_coordinate;
 
 	Mesh_ply mesh;
 
@@ -68,7 +68,10 @@ public:
 		}
     }
 
-
+	bool hasTexturecoordinate()
+	{
+		return m_has_texture_coordinate;
+	}
 private:
 	void initialize()
 	{		
@@ -148,6 +151,7 @@ private:
 			}
 			if (this->Vertices_texture_coordinates.size() != 0)
 			{
+				m_has_texture_coordinate = true;
 				float Texture_coordinates[2];
 				Texture_coordinates[0] = this->Vertices_texture_coordinates[i][0];
 				Texture_coordinates[1] = this->Vertices_texture_coordinates[i][1];
